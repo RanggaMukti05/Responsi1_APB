@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:responsi1apb/rangga/forgetpw.dart';
 import 'package:responsi1apb/rangga/createakun.dart';
-
+import 'package:responsi1apb/rangga/dashboard/dashboard.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SignInScreen(),
-    );
+    return const Scaffold(body: SignInScreen());
   }
 }
 
@@ -31,7 +29,9 @@ class _SignInScreenState extends State<SignInScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9FB), // Warna background abu-abu sangat terang
+      backgroundColor: const Color(
+        0xFFF9F9FB,
+      ), // Warna background abu-abu sangat terang
       body: SingleChildScrollView(
         child: SizedBox(
           height: screenHeight,
@@ -56,7 +56,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
               ),
-              
+
               // Elemen Dekoratif Lengkungan di Kanan Bawah Header
               Positioned(
                 right: -60,
@@ -79,7 +79,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 20),
-                      
+
                       // Teks Judul
                       const Text(
                         'Sign In',
@@ -91,16 +91,13 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      
+
                       // Teks Subjudul
                       const Text(
                         'Please sign in to your registered account',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
                       ),
-                      
+
                       const SizedBox(height: 40),
 
                       // Input User Name
@@ -119,24 +116,35 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: 'User Name',
-                            hintStyle: const TextStyle(color: Color(0xFFA0A5B9)),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                            hintStyle: const TextStyle(
+                              color: Color(0xFFA0A5B9),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 18,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE5E7EB),
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE5E7EB),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color(0xFF7033FF)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF7033FF),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 20),
 
                       // Input Password
@@ -156,27 +164,38 @@ class _SignInScreenState extends State<SignInScreen> {
                           obscureText: _isPasswordObscured,
                           decoration: InputDecoration(
                             hintText: 'Password',
-                            hintStyle: const TextStyle(color: Color(0xFFA0A5B9)),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                            hintStyle: const TextStyle(
+                              color: Color(0xFFA0A5B9),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 18,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE5E7EB),
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE5E7EB),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color(0xFF7033FF)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF7033FF),
+                              ),
                             ),
                             // Ikon Mata (Toggle Password)
                             suffixIcon: Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: IconButton(
                                 icon: Icon(
-                                  _isPasswordObscured 
-                                      ? Icons.visibility_off_outlined 
+                                  _isPasswordObscured
+                                      ? Icons.visibility_off_outlined
                                       : Icons.visibility_outlined,
                                   color: const Color(0xFF7033FF),
                                 ),
@@ -198,9 +217,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: GestureDetector(
                           onTap: () {
                             Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                            builder: (context) => ForgotPasswordScreen(),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ForgotPasswordScreen(),
                               ),
                             );
                           },
@@ -222,7 +241,14 @@ class _SignInScreenState extends State<SignInScreen> {
                         width: double.infinity,
                         height: 55,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const JobieDashboard(),
+                              ),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF7033FF),
                             shape: RoundedRectangleBorder(
@@ -246,15 +272,28 @@ class _SignInScreenState extends State<SignInScreen> {
                       // Divider "Or sign in with"
                       Row(
                         children: [
-                          Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
+                            ),
+                          ),
                           const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16.0),
                             child: Text(
                               'Or sign in with',
-                              style: TextStyle(color: Color(0xFF7033FF), fontSize: 13),
+                              style: TextStyle(
+                                color: Color(0xFF7033FF),
+                                fontSize: 13,
+                              ),
                             ),
                           ),
-                          Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
+                            ),
+                          ),
                         ],
                       ),
 
@@ -270,7 +309,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 width: 24,
                                 height: 24,
                               ),
-                              onTap: () async{
+                              onTap: () async {
                                 await launchUrl(
                                   Uri.parse('https://www.google.com'),
                                   mode: LaunchMode.externalApplication,
@@ -286,7 +325,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 color: Color(0xFF1877F2),
                                 size: 30,
                               ),
-                              onTap: () async{
+                              onTap: () async {
                                 await launchUrl(
                                   Uri.parse('https://www.facebook.com'),
                                   mode: LaunchMode.externalApplication,
@@ -313,7 +352,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFEAE2FF), // Latar belakang ungu sangat muda
+                            backgroundColor: const Color(
+                              0xFFEAE2FF,
+                            ), // Latar belakang ungu sangat muda
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -329,7 +370,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -343,7 +384,10 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   // Widget Helper untuk Tombol Social Media
-  Widget _buildSocialButton({required Widget iconWidget, required VoidCallback onTap}) {
+  Widget _buildSocialButton({
+    required Widget iconWidget,
+    required VoidCallback onTap,
+  }) {
     return Container(
       height: 55,
       decoration: BoxDecoration(
@@ -354,9 +398,7 @@ class _SignInScreenState extends State<SignInScreen> {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(30),
-        child: Center(
-          child: iconWidget,
-        ),
+        child: Center(child: iconWidget),
       ),
     );
   }
