@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:responsi1apb/aldi/detail_job.dart';
+import 'package:responsi1apb/aldi/profil_page.dart';
 
 class JobieDashboard extends StatefulWidget {
   const JobieDashboard({Key? key}) : super(key: key);
@@ -758,11 +759,21 @@ class _JobieDashboardState extends State<JobieDashboard> {
                         badgeText: '1',
                         badgeColor: const Color(0xFFFF5C5C),
                       ),
-                      _buildDrawerMenuItem(
-                        icon: Icons.person_rounded,
-                        iconColor: const Color(0xFFE3B100),
-                        boxColor: const Color(0xFFFFF7DD),
-                        title: 'Profile',
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ProfilePage(),
+                            ),
+                          );
+                        },
+                        child: _buildDrawerMenuItem(
+                          icon: Icons.person_rounded,
+                          iconColor: const Color(0xFFE3B100),
+                          boxColor: const Color(0xFFFFF7DD),
+                          title: 'Profile',
+                        ),
                       ),
                       _buildDrawerMenuItem(
                         icon: Icons.chat_bubble_rounded,
