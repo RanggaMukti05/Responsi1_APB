@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:responsi1apb/aldi/apply_job.dart';
+import 'package:responsi1apb/screens/job/apply_job.dart';
 
 class DetailJobPage extends StatelessWidget {
   final String companyName;

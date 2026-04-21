@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:responsi1apb/rangga/forgetpw.dart';
-import 'package:responsi1apb/rangga/createakun.dart';
-import 'package:responsi1apb/rangga/dashboard/dashboard.dart';
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: SignInScreen());
-  }
-}
+import 'package:responsi1apb/screens/auth/forgetpw.dart';
+import 'package:responsi1apb/screens/auth/createakun.dart';
+import 'package:responsi1apb/screens/dashboard/dashboard.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -25,19 +16,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Mendapatkan tinggi layar untuk penyesuaian tata letak
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(
-        0xFFF9F9FB,
-      ), // Warna background abu-abu sangat terang
+      backgroundColor: const Color(0xFFF9F9FB),
       body: SingleChildScrollView(
         child: SizedBox(
           height: screenHeight,
           child: Stack(
             children: [
-              // 1. Latar Belakang Ungu (Header)
               Container(
                 height: 240,
                 width: double.infinity,
@@ -46,8 +33,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF8A4DFF), // Ungu terang
-                      Color(0xFF7033FF), // Ungu gelap
+                      Color(0xFF8A4DFF),
+                      Color(0xFF7033FF),
                     ],
                   ),
                   borderRadius: BorderRadius.only(
@@ -56,8 +43,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
               ),
-
-              // Elemen Dekoratif Lengkungan di Kanan Bawah Header
               Positioned(
                 right: -60,
                 bottom: -40,
@@ -70,8 +55,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
               ),
-
-              // 2. Konten Utama
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -79,8 +62,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 20),
-
-                      // Teks Judul
                       const Text(
                         'Sign In',
                         style: TextStyle(
@@ -91,16 +72,11 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-
-                      // Teks Subjudul
                       const Text(
                         'Please sign in to your registered account',
                         style: TextStyle(color: Colors.white70, fontSize: 14),
                       ),
-
                       const SizedBox(height: 40),
-
-                      // Input User Name
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -144,10 +120,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 20),
-
-                      // Input Password
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -189,7 +162,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                 color: Color(0xFF7033FF),
                               ),
                             ),
-                            // Ikon Mata (Toggle Password)
                             suffixIcon: Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: IconButton(
@@ -209,10 +181,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
-                      // Forgot Password Link
                       Center(
                         child: GestureDetector(
                           onTap: () {
@@ -233,10 +202,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
-                      // Tombol Login
                       SizedBox(
                         width: double.infinity,
                         height: 55,
@@ -266,10 +232,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 40),
-
-                      // Divider "Or sign in with"
                       Row(
                         children: [
                           Expanded(
@@ -296,10 +259,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 30),
-
-                      // Tombol Social Media (Google & Facebook)
                       Row(
                         children: [
                           Expanded(
@@ -335,10 +295,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ],
                       ),
-
                       const Spacer(),
-
-                      // Tombol Create Account di paling bawah
                       SizedBox(
                         width: double.infinity,
                         height: 55,
@@ -352,9 +309,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                              0xFFEAE2FF,
-                            ), // Latar belakang ungu sangat muda
+                            backgroundColor: const Color(0xFFEAE2FF),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -370,7 +325,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -383,7 +337,6 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  // Widget Helper untuk Tombol Social Media
   Widget _buildSocialButton({
     required Widget iconWidget,
     required VoidCallback onTap,

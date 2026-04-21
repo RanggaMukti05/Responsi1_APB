@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:responsi1apb/rangga/loginjob.dart';
+import 'package:responsi1apb/screens/auth/loginjob.dart';
 
 class GetStartedScreen extends StatefulWidget {
   const GetStartedScreen({super.key});
@@ -47,8 +47,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
         child: SafeArea(
           child: Column(
             children: [
-
-              /// 🔥 LOGO ATAS
               const SizedBox(height: 20),
               Container(
                 width: 60,
@@ -68,8 +66,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                   ),
                 ),
               ),
-
-              /// 🔥 SLIDER
               Expanded(
                 child: PageView.builder(
                   controller: _controller,
@@ -83,16 +79,11 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-
-                        /// 🔥 GAMBAR
                         Image.network(
                           data[index]["image"]!,
                           height: 200,
                         ),
-
                         const SizedBox(height: 30),
-
-                        /// 🔥 TITLE
                         Text(
                           data[index]["title"]!,
                           textAlign: TextAlign.center,
@@ -102,10 +93,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                             color: Colors.white,
                           ),
                         ),
-
                         const SizedBox(height: 10),
-
-                        /// 🔥 DESC
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
                           child: Text(
@@ -122,8 +110,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                   },
                 ),
               ),
-
-              /// 🔥 INDIKATOR GARIS (BISA DIKLIK)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(data.length, (index) {
@@ -149,10 +135,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                   );
                 }),
               ),
-
               const SizedBox(height: 30),
-
-              /// 🔥 BUTTON GET STARTED
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: SizedBox(
@@ -181,7 +164,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 30),
             ],
           ),

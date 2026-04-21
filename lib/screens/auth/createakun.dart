@@ -1,16 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:responsi1apb/rangga/signin.dart';
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SignUpScreen(),
-    );
-  }
-}
+import 'package:responsi1apb/screens/auth/signin.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -25,9 +14,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9FB), // Background abu-abu sangat terang
-      
-      // Tombol Login di paling bawah
+      backgroundColor: const Color(0xFFF9F9FB),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
@@ -39,11 +26,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: SizedBox(
           height: 55,
           child: ElevatedButton(
-            onPressed: () {
-              // Aksi navigasi ke halaman Login
-            },
+            onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEAE2FF), // Latar ungu sangat muda
+              backgroundColor: const Color(0xFFEAE2FF),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -60,11 +45,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
       ),
-      
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            // 1. Latar Belakang Ungu (Header)
             Container(
               height: 240,
               width: double.infinity,
@@ -73,8 +56,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF8A4DFF), // Ungu terang
-                    Color(0xFF7033FF), // Ungu gelap
+                    Color(0xFF8A4DFF),
+                    Color(0xFF7033FF),
                   ],
                 ),
                 borderRadius: BorderRadius.only(
@@ -83,8 +66,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
             ),
-            
-            // Elemen Dekoratif Lengkungan di Kanan Bawah Header
             Positioned(
               right: -60,
               bottom: -40,
@@ -97,8 +78,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
             ),
-
-            // 2. Konten Utama
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -106,8 +85,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    
-                    // Teks Judul
                     const Text(
                       'Create an Account',
                       style: TextStyle(
@@ -118,8 +95,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    
-                    // Teks Subjudul
                     const Text(
                       'Please fill registration form below',
                       style: TextStyle(
@@ -127,33 +102,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         fontSize: 14,
                       ),
                     ),
-                    
                     const SizedBox(height: 40),
-
-                    // Input User Name
                     _buildTextField(hintText: 'User Name', isPassword: false),
                     const SizedBox(height: 20),
-
-                    // Input User Email
                     _buildTextField(hintText: 'User Email', isPassword: false),
                     const SizedBox(height: 20),
-
-                    // Input Password
                     _buildTextField(hintText: 'Password', isPassword: true),
                     const SizedBox(height: 30),
-
-                    // Tombol Sign UP
                     SizedBox(
                       width: double.infinity,
                       height: 55,
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SignInScreen(),
-                          ),
-                        );
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignInScreen(),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF7033FF),
@@ -172,16 +138,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 24),
-
-                    // Teks Terms and Condition
                     Center(
                       child: RichText(
                         textAlign: TextAlign.center,
                         text: const TextSpan(
                           style: TextStyle(
-                            color: Color(0xFF7B809A), // Warna abu-abu teks biasa
+                            color: Color(0xFF7B809A),
                             fontSize: 13,
                             height: 1.5,
                           ),
@@ -190,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             TextSpan(
                               text: 'terms',
                               style: TextStyle(
-                                color: Color(0xFF7033FF), // Warna ungu
+                                color: Color(0xFF7033FF),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -198,7 +161,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             TextSpan(
                               text: 'condition',
                               style: TextStyle(
-                                color: Color(0xFF7033FF), // Warna ungu
+                                color: Color(0xFF7033FF),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -217,7 +180,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // Fungsi Helper untuk Membuat TextField
   Widget _buildTextField({required String hintText, required bool isPassword}) {
     return Container(
       decoration: BoxDecoration(
@@ -249,7 +211,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             borderRadius: BorderRadius.circular(30),
             borderSide: const BorderSide(color: Color(0xFF7033FF)),
           ),
-          // Tambahkan icon mata hanya jika ini adalah field password
           suffixIcon: isPassword
               ? Padding(
                   padding: const EdgeInsets.only(right: 8.0),

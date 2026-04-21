@@ -5,11 +5,14 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFF6F42C1);
-    const Color bgColor = Color(0xFFF5F5F5);
-    const Color titleColor = Color(0xFF212529);
-    const Color textColor = Color(0xFF8E8E93);
-    const Color lightPurple = Color(0xFFEAE4F4);
+    // 1. MENGAMBIL WARNA DARI TEMA GLOBAL SECARA OTOMATIS
+    final primaryColor = Theme.of(context).primaryColor;
+    final bgColor = Theme.of(context).scaffoldBackgroundColor;
+    final titleColor = Theme.of(context).textTheme.bodyLarge?.color;
+    final textColor = Theme.of(context).textTheme.bodyMedium?.color;
+    final cardColor = Theme.of(context).cardColor;
+    final borderColor = Theme.of(context).dividerColor;
+    final lightPurple = primaryColor.withOpacity(0.1); 
 
     final skills = [
       {'title': 'PHP', 'percent': 66, 'color': const Color(0xFFF08A24)},
@@ -27,23 +30,16 @@ class ProfilePage extends StatelessWidget {
             Container(
               height: 78,
               padding: const EdgeInsets.symmetric(horizontal: 18),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: cardColor,
                 border: Border(
-                  bottom: BorderSide(color: Color(0xFFEAEAEA)),
+                  bottom: BorderSide(color: borderColor),
                 ),
               ),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      color: Color(0xFF9D9DA5),
-                      size: 28,
-                    ),
-                  ),
-                  const Expanded(
+                  const SizedBox(width: 48), // Spacer pengganti tombol back
+                  Expanded(
                     child: Center(
                       child: Text(
                         'Profile',
@@ -97,11 +93,11 @@ class ProfilePage extends StatelessWidget {
                             height: 142,
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: cardColor,
                               borderRadius: BorderRadius.circular(22),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.05),
+                                  color: Colors.black.withOpacity(0.05),
                                   blurRadius: 18,
                                   offset: const Offset(0, 8),
                                 ),
@@ -122,7 +118,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          const Text(
+                          Text(
                             'Henry Kanwil',
                             style: TextStyle(
                               fontSize: 26,
@@ -131,7 +127,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
+                          Text(
                             'Programmer',
                             style: TextStyle(
                               fontSize: 19,
@@ -140,8 +136,8 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu',
                               textAlign: TextAlign.center,
@@ -156,19 +152,10 @@ class ProfilePage extends StatelessWidget {
                           const SizedBox(height: 26),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: const [
-                              _ContactCircle(
-                                icon: Icons.call_rounded,
-                                color: primaryColor,
-                              ),
-                              _ContactCircle(
-                                icon: Icons.mail_rounded,
-                                color: primaryColor,
-                              ),
-                              _ContactCircle(
-                                icon: Icons.location_on_rounded,
-                                color: primaryColor,
-                              ),
+                            children: [
+                              _ContactCircle(icon: Icons.call_rounded, color: primaryColor),
+                              _ContactCircle(icon: Icons.mail_rounded, color: primaryColor),
+                              _ContactCircle(icon: Icons.location_on_rounded, color: primaryColor),
                             ],
                           ),
                           const SizedBox(height: 30),
@@ -187,55 +174,32 @@ class ProfilePage extends StatelessWidget {
                                     children: [
                                       Text(
                                         'My Resume',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w700,
-                                        ),
+                                        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700),
                                       ),
                                       SizedBox(height: 14),
                                       Text(
                                         'david_resume.pdf',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400,
-                                        ),
+                                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400),
                                       ),
                                     ],
                                   ),
                                 ),
-                                Icon(
-                                  Icons.more_vert_rounded,
-                                  color: Colors.white,
-                                  size: 34,
-                                ),
+                                Icon(Icons.more_vert_rounded, color: Colors.white, size: 34),
                               ],
                             ),
                           ),
                           const SizedBox(height: 34),
-                          const Align(
+                          Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Skill',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: titleColor,
-                              ),
-                            ),
+                            child: Text('Skill', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: titleColor)),
                           ),
                           const SizedBox(height: 18),
                           GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: skills.length,
-                            gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              mainAxisSpacing: 18,
-                              crossAxisSpacing: 18,
-                              childAspectRatio: 0.83,
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, mainAxisSpacing: 18, crossAxisSpacing: 18, childAspectRatio: 0.83,
                             ),
                             itemBuilder: (context, index) {
                               final skill = skills[index];
@@ -244,6 +208,7 @@ class ProfilePage extends StatelessWidget {
                                 percent: skill['percent'] as int,
                                 progressColor: skill['color'] as Color,
                                 bgColor: lightPurple,
+                                textColor: titleColor,
                               );
                             },
                           ),
@@ -257,48 +222,7 @@ class ProfilePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(top: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 18,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: 3,
-          onTap: (_) {},
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: primaryColor,
-          unselectedItemColor: const Color(0xFFB7B7BF),
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          elevation: 0,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded, size: 34),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border_rounded, size: 32),
-              label: 'Saved',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.mail_outline_rounded, size: 32),
-              label: 'Mail',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded, size: 30),
-              label: 'Menu',
-            ),
-          ],
-        ),
-      ),
+      // PERHATIKAN: bottomNavigationBar dihapus dari sini karena numpang di Dashboard!
     );
   }
 }
@@ -307,10 +231,7 @@ class _ContactCircle extends StatelessWidget {
   final IconData icon;
   final Color color;
 
-  const _ContactCircle({
-    required this.icon,
-    required this.color,
-  });
+  const _ContactCircle({required this.icon, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +240,7 @@ class _ContactCircle extends StatelessWidget {
       height: 110,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFFE4DDF1)),
+        border: Border.all(color: Theme.of(context).dividerColor),
         color: Colors.transparent,
       ),
       child: Icon(icon, color: color, size: 38),
@@ -332,12 +253,14 @@ class _SkillCard extends StatelessWidget {
   final int percent;
   final Color progressColor;
   final Color bgColor;
+  final Color? textColor;
 
   const _SkillCard({
     required this.title,
     required this.percent,
     required this.progressColor,
     required this.bgColor,
+    this.textColor,
   });
 
   @override
@@ -370,17 +293,17 @@ class _SkillCard extends StatelessWidget {
                 Container(
                   width: 62,
                   height: 62,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     '$percent%',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF111111),
+                      color: textColor,
                     ),
                   ),
                 ),
@@ -391,10 +314,10 @@ class _SkillCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF212529),
+              color: textColor,
             ),
           ),
         ],

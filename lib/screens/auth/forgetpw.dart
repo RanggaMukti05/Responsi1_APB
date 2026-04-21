@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Diperlukan untuk inputFormatters
-import 'package:responsi1apb/rangga/verify.dart';
-import 'package:responsi1apb/rangga/createakun.dart';
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: ForgotPasswordScreen(),
-    );
-  }
-}
+import 'package:flutter/services.dart';
+import 'package:responsi1apb/screens/auth/verify.dart';
+import 'package:responsi1apb/screens/auth/createakun.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
@@ -20,9 +9,7 @@ class ForgotPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9FB), // Background abu-abu sangat terang
-      
-      // Menggunakan bottomNavigationBar untuk meletakkan tombol "Create account" di paling bawah
+      backgroundColor: const Color(0xFFF9F9FB),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
@@ -38,12 +25,12 @@ class ForgotPasswordScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                builder: (context) => SignUpScreen(),
+                  builder: (context) => SignUpScreen(),
                 ),
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEAE2FF), // Ungu sangat muda
+              backgroundColor: const Color(0xFFEAE2FF),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -60,11 +47,9 @@ class ForgotPasswordScreen extends StatelessWidget {
           ),
         ),
       ),
-      
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            // 1. Background Ungu (Header)
             Container(
               height: 220,
               width: double.infinity,
@@ -73,8 +58,8 @@ class ForgotPasswordScreen extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF8A4DFF), // Ungu terang
-                    Color(0xFF7033FF), // Ungu gelap
+                    Color(0xFF8A4DFF),
+                    Color(0xFF7033FF),
                   ],
                 ),
                 borderRadius: BorderRadius.only(
@@ -83,8 +68,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
-            // Elemen Dekoratif Lengkungan
             Positioned(
               right: -60,
               bottom: -40,
@@ -97,8 +80,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            // 2. Konten Utama
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -106,8 +87,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 10),
-                    
-                    // Teks Judul
                     const Text(
                       'Forgot Password',
                       style: TextStyle(
@@ -118,8 +97,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    
-                    // Teks Subjudul
                     const Text(
                       'Please enter your number',
                       style: TextStyle(
@@ -127,10 +104,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-                    
                     const SizedBox(height: 40),
-
-                    // Input Nomor HP
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -144,10 +118,9 @@ class ForgotPasswordScreen extends StatelessWidget {
                         ],
                       ),
                       child: TextField(
-                        // BAGIAN INI YANG MEMBUAT HANYA BISA INPUT ANGKA
                         keyboardType: TextInputType.number,
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly, // Menolak huruf/simbol
+                          FilteringTextInputFormatter.digitsOnly,
                         ],
                         decoration: InputDecoration(
                           hintText: '0865435353',
@@ -155,7 +128,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
-                            borderSide: const BorderSide(color: Color(0xFF7033FF)), // Warna ungu sesuai gambar
+                            borderSide: const BorderSide(color: Color(0xFF7033FF)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -165,7 +138,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30),
                             borderSide: const BorderSide(color: Color(0xFF7033FF), width: 2),
                           ),
-                          // Ikon panah atas bawah (Spinner) untuk membuatnya mirip gambar
                           suffixIcon: const Padding(
                             padding: EdgeInsets.only(right: 12.0),
                             child: Column(
@@ -173,7 +145,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.arrow_drop_up, size: 18, color: Colors.grey),
-                                SizedBox(height: 2), // Jarak kecil
+                                SizedBox(height: 2),
                                 Icon(Icons.arrow_drop_down, size: 18, color: Colors.grey),
                               ],
                             ),
@@ -181,24 +153,21 @@ class ForgotPasswordScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    
                     const SizedBox(height: 24),
-
-                    // Tombol Send OTP
                     SizedBox(
                       width: double.infinity,
                       height: 55,
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OtpVerifyScreen(),
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OtpVerifyScreen(),
                             ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF7033FF), // Background ungu
+                          backgroundColor: const Color(0xFF7033FF),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),

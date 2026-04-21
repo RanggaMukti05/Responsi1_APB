@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:responsi1apb/rangga/loginjob.dart';
+import 'package:responsi1apb/screens/auth/loginjob.dart';
 import 'get_started.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -27,7 +27,6 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    /// 🔥 Animasi lingkaran
     _circleController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -43,7 +42,6 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(parent: _circleController, curve: Curves.easeOut),
     );
 
-    /// 🔥 Animasi huruf J (delay muncul)
     _textController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -55,15 +53,12 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(parent: _textController, curve: Curves.easeOut),
     );
 
-    /// 🔥 Jalankan animasi
     _circleController.forward();
 
-    // Delay baru huruf J muncul
     Future.delayed(const Duration(milliseconds: 700), () {
       _textController.forward();
     });
 
-    /// 🔥 pindah ke halaman rangga
     Future.delayed(const Duration(seconds: 3), () {
       if (!mounted) return;
       Navigator.pushReplacement(

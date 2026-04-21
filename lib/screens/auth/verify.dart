@@ -1,17 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:responsi1apb/rangga/createakun.dart';
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: OtpVerifyScreen(),
-    );
-  }
-}
+import 'package:responsi1apb/screens/auth/createakun.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
   const OtpVerifyScreen({super.key});
@@ -21,13 +10,11 @@ class OtpVerifyScreen extends StatefulWidget {
 }
 
 class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
-  // Membuat list untuk menyimpan controller dan focus node untuk 6 kotak OTP
   final List<TextEditingController> _controllers = List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
 
   @override
   void dispose() {
-    // Pastikan untuk menghapus controller dan focus node dari memori saat layar ditutup
     for (var controller in _controllers) {
       controller.dispose();
     }
@@ -40,9 +27,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9FB), // Background abu-abu terang
-      
-      // Tombol Create Account di paling bawah layar
+      backgroundColor: const Color(0xFFF9F9FB),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
@@ -58,7 +43,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                builder: (context) => SignUpScreen(),
+                  builder: (context) => SignUpScreen(),
                 ),
               );
             },
@@ -80,11 +65,9 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           ),
         ),
       ),
-      
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            // 1. Background Ungu (Header)
             Container(
               height: 200,
               width: double.infinity,
@@ -93,8 +76,8 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF8A4DFF), 
-                    Color(0xFF7033FF), 
+                    Color(0xFF8A4DFF),
+                    Color(0xFF7033FF),
                   ],
                 ),
                 borderRadius: BorderRadius.only(
@@ -103,8 +86,6 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                 ),
               ),
             ),
-            
-            // Elemen Dekoratif Lengkungan
             Positioned(
               right: -60,
               bottom: -40,
@@ -117,8 +98,6 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                 ),
               ),
             ),
-
-            // 2. Konten Utama
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -126,8 +105,6 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 10),
-                    
-                    // Teks Judul
                     const Text(
                       'OTP Verify',
                       style: TextStyle(
@@ -138,8 +115,6 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    
-                    // Teks Subjudul
                     const Text(
                       'Please enter your OTP',
                       style: TextStyle(
@@ -147,26 +122,19 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                         fontSize: 14,
                       ),
                     ),
-                    
                     const SizedBox(height: 40),
-
-                    // Baris Kotak OTP
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: List.generate(6, (index) => _buildOtpBox(index)),
                     ),
-                    
                     const SizedBox(height: 30),
-
-                    // Tombol Verify & Proceed
                     SizedBox(
                       width: double.infinity,
                       height: 55,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Menggabungkan semua teks dari kotak menjadi satu string OTP
                           String otpCode = _controllers.map((c) => c.text).join();
-                          print("OTP yang dimasukkan: $otpCode");
+                          print(otpCode);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF7033FF),
@@ -195,23 +163,22 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     );
   }
 
-  // Fungsi khusus untuk membuat masing-masing kotak OTP
   Widget _buildOtpBox(int index) {
     return SizedBox(
-      width: 48, // Lebar masing-masing kotak
-      height: 55, // Tinggi masing-masing kotak
+      width: 48,
+      height: 55,
       child: TextField(
         controller: _controllers[index],
         focusNode: _focusNodes[index],
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
-        maxLength: 1, // Maksimal 1 karakter per kotak
+        maxLength: 1,
         style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly, // Hanya angka
+          FilteringTextInputFormatter.digitsOnly,
         ],
         decoration: InputDecoration(
-          counterText: "", // Menyembunyikan teks counter karakter bawaan (0/1)
+          counterText: "",
           filled: true,
           fillColor: Colors.white,
           contentPadding: EdgeInsets.zero,
@@ -227,21 +194,17 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF7033FF), width: 1.5), // Garis ungu saat aktif
+            borderSide: const BorderSide(color: Color(0xFF7033FF), width: 1.5),
           ),
         ),
         onChanged: (value) {
-          // LOGIKA PINDAH KOTAK OTOMATIS
           if (value.isNotEmpty) {
-            // Jika ada isinya dan bukan kotak terakhir, pindah ke kanan
             if (index < 5) {
               FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
             } else {
-              // Jika ini kotak terakhir dan sudah diisi, tutup keyboard
-              FocusScope.of(context).unfocus(); 
+              FocusScope.of(context).unfocus();
             }
           } else {
-            // Jika dihapus (kosong) dan bukan kotak pertama, pindah ke kiri
             if (index > 0) {
               FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
             }
