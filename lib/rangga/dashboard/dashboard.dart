@@ -18,7 +18,8 @@ class _JobieDashboardState extends State<JobieDashboard> {
   final Color borderColor = const Color(0xFFE4E4E4);
   final Color titleColor = const Color(0xFF212529);
   final Color textColor = const Color(0xFF8E8E93);
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isDarkMode = false;
   final TextEditingController searchController = TextEditingController();
 
   final List<Map<String, String>> allJobs = [
@@ -91,6 +92,8 @@ class _JobieDashboardState extends State<JobieDashboard> {
     final recommendedJobs = filteredJobs.take(3).toList();
 
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: _buildAppDrawer(),
       backgroundColor: bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -155,7 +158,16 @@ class _JobieDashboardState extends State<JobieDashboard> {
         children: [
           Row(
             children: [
-              const Icon(Icons.grid_view_rounded, color: Colors.white, size: 30),
+              GestureDetector(
+                onTap: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+                child: const Icon(
+                  Icons.grid_view_rounded,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
               const Spacer(),
               const Icon(Icons.palette_outlined, color: Colors.white, size: 30),
               const SizedBox(width: 14),
@@ -682,6 +694,319 @@ class _JobieDashboardState extends State<JobieDashboard> {
       decoration: BoxDecoration(
         color: const Color(0xFFD4D4D4),
         borderRadius: BorderRadius.circular(10),
+      ),
+    );
+  }
+
+  Widget _buildAppDrawer() {
+    return Drawer(
+      width: MediaQuery.of(context).size.width * 0.82,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
+      child: SafeArea(
+        child: Container(
+          color: const Color(0xFFF7F7F7),
+          child: Column(
+            children: [
+              _buildDrawerHeader(),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(22, 18, 22, 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'MAIN MENU',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                          color: Color(0xFF111111),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      _buildDrawerMenuItem(
+                        icon: Icons.favorite_rounded,
+                        iconColor: const Color(0xFFFF6F91),
+                        boxColor: const Color(0xFFFFEEF2),
+                        title: 'Welcome',
+                      ),
+                      _buildDrawerMenuItem(
+                        icon: Icons.home_rounded,
+                        iconColor: const Color(0xFFFF66B3),
+                        boxColor: const Color(0xFFFFEEF7),
+                        title: 'Home',
+                      ),
+                      _buildDrawerMenuItem(
+                        icon: Icons.layers_rounded,
+                        iconColor: const Color(0xFFFFA14A),
+                        boxColor: const Color(0xFFFFF4E7),
+                        title: 'Pages',
+                      ),
+                      _buildDrawerMenuItem(
+                        icon: Icons.grid_view_rounded,
+                        iconColor: const Color(0xFF47B5FF),
+                        boxColor: const Color(0xFFEAF7FF),
+                        title: 'Components',
+                      ),
+                      _buildDrawerMenuItem(
+                        icon: Icons.notifications_rounded,
+                        iconColor: const Color(0xFF19B38C),
+                        boxColor: const Color(0xFFE8FAF4),
+                        title: 'Notification',
+                        badgeText: '1',
+                        badgeColor: const Color(0xFFFF5C5C),
+                      ),
+                      _buildDrawerMenuItem(
+                        icon: Icons.person_rounded,
+                        iconColor: const Color(0xFFE3B100),
+                        boxColor: const Color(0xFFFFF7DD),
+                        title: 'Profile',
+                      ),
+                      _buildDrawerMenuItem(
+                        icon: Icons.chat_bubble_rounded,
+                        iconColor: const Color(0xFF56C3EA),
+                        boxColor: const Color(0xFFEAF9FF),
+                        title: 'Chat',
+                        badgeText: '5',
+                        badgeColor: const Color(0xFF56C3EA),
+                      ),
+                      _buildDrawerMenuItem(
+                        icon: Icons.logout_rounded,
+                        iconColor: const Color(0xFFFF7A9C),
+                        boxColor: const Color(0xFFFFEEF2),
+                        title: 'Logout',
+                      ),
+                      _buildDrawerMenuItem(
+                        icon: Icons.phone_android_rounded,
+                        iconColor: const Color(0xFFFF6C8C),
+                        boxColor: const Color(0xFFFFEEF2),
+                        title: 'One Level (Multilevel)',
+                      ),
+                      const SizedBox(height: 18),
+                      const Divider(color: Color(0xFFE0E0E0), thickness: 1),
+                      const SizedBox(height: 26),
+                      const Text(
+                        'SETTINGS',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                          color: Color(0xFF111111),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      _buildDrawerMenuItem(
+                        icon: Icons.palette_rounded,
+                        iconColor: const Color(0xFF5D8BFF),
+                        boxColor: const Color(0xFFEEF3FF),
+                        title: 'Highlights',
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 38,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8FAF4),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.nightlight_round,
+                                color: Color(0xFF0FA37F),
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            const Expanded(
+                              child: Text(
+                                'Dark Mode',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF111111),
+                                ),
+                              ),
+                            ),
+                            Switch(
+                              value: isDarkMode,
+                              onChanged: (value) {
+                                setState(() {
+                                  isDarkMode = value;
+                                });
+                              },
+                              activeColor: Colors.white,
+                              activeTrackColor: const Color(0xFF6F42C1),
+                              inactiveThumbColor: Colors.white,
+                              inactiveTrackColor: const Color(0xFFD9D9D9),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 22),
+                      Row(
+                        children: [
+                          Container(
+                            width: 70,
+                            height: 70,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFD8E9FF),
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: const Icon(
+                              Icons.trending_up_rounded,
+                              size: 38,
+                              color: Color(0xFF77A6FF),
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Jobie - Job Portal',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF111111),
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'App Version 1.0',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF8E8E93),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerHeader() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(18, 22, 18, 22),
+      decoration: const BoxDecoration(
+        color: Color(0xFF4DA3F0),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+              image: const DecorationImage(
+                image: NetworkImage('https://i.pravatar.cc/150?img=11'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(width: 14),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Good Morning',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Henry Kanwil',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerMenuItem({
+    required IconData icon,
+    required Color iconColor,
+    required Color boxColor,
+    required String title,
+    String? badgeText,
+    Color? badgeColor,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: boxColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF111111),
+              ),
+            ),
+          ),
+          if (badgeText != null)
+            Container(
+              width: 24,
+              height: 24,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: badgeColor ?? const Color(0xFFFF5C5C),
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                badgeText,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          const SizedBox(width: 10),
+          const Icon(
+            Icons.chevron_right_rounded,
+            color: Color(0xFF9A9A9A),
+            size: 24,
+          ),
+        ],
       ),
     );
   }
