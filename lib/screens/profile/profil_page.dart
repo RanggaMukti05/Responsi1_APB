@@ -5,14 +5,11 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. MENGAMBIL WARNA DARI TEMA GLOBAL SECARA OTOMATIS
-    final primaryColor = Theme.of(context).primaryColor;
-    final bgColor = Theme.of(context).scaffoldBackgroundColor;
-    final titleColor = Theme.of(context).textTheme.bodyLarge?.color;
-    final textColor = Theme.of(context).textTheme.bodyMedium?.color;
-    final cardColor = Theme.of(context).cardColor;
-    final borderColor = Theme.of(context).dividerColor;
-    final lightPurple = primaryColor.withOpacity(0.1); 
+    const Color primaryColor = Color(0xFF6F42C1);
+    const Color bgColor = Color(0xFFF5F5F5);
+    const Color titleColor = Color(0xFF212529);
+    const Color textColor = Color(0xFF8E8E93);
+    const Color lightPurple = Color(0xFFEAE4F4);
 
     final skills = [
       {'title': 'PHP', 'percent': 66, 'color': const Color(0xFFF08A24)},
@@ -30,16 +27,21 @@ class ProfilePage extends StatelessWidget {
             Container(
               height: 78,
               padding: const EdgeInsets.symmetric(horizontal: 18),
-              decoration: BoxDecoration(
-                color: cardColor,
-                border: Border(
-                  bottom: BorderSide(color: borderColor),
-                ),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                border: Border(bottom: BorderSide(color: Color(0xFFEAEAEA))),
               ),
               child: Row(
                 children: [
-                  const SizedBox(width: 48), // Spacer pengganti tombol back
-                  Expanded(
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Color(0xFF9D9DA5),
+                      size: 28,
+                    ),
+                  ),
+                  const Expanded(
                     child: Center(
                       child: Text(
                         'Profile',
@@ -69,8 +71,8 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(18),
-                      child: Image.network(
-                        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1200&auto=format&fit=crop',
+                      child: Image.asset(
+                        'assets/images/profil_cover.png',
                         height: 215,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -93,11 +95,11 @@ class ProfilePage extends StatelessWidget {
                             height: 142,
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: cardColor,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(22),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
+                                  color: Colors.black.withValues(alpha: 0.05),
                                   blurRadius: 18,
                                   offset: const Offset(0, 8),
                                 ),
@@ -105,8 +107,8 @@ class ProfilePage extends StatelessWidget {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(18),
-                              child: Image.network(
-                                'https://i.pravatar.cc/300?img=11',
+                              child: Image.asset(
+                                'assets/images/profil.png',
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
@@ -118,7 +120,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          Text(
+                          const Text(
                             'Henry Kanwil',
                             style: TextStyle(
                               fontSize: 26,
@@ -127,7 +129,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          Text(
+                          const Text(
                             'Programmer',
                             style: TextStyle(
                               fontSize: 19,
@@ -136,8 +138,8 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu',
                               textAlign: TextAlign.center,
@@ -152,10 +154,19 @@ class ProfilePage extends StatelessWidget {
                           const SizedBox(height: 26),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _ContactCircle(icon: Icons.call_rounded, color: primaryColor),
-                              _ContactCircle(icon: Icons.mail_rounded, color: primaryColor),
-                              _ContactCircle(icon: Icons.location_on_rounded, color: primaryColor),
+                            children: const [
+                              _ContactCircle(
+                                icon: Icons.call_rounded,
+                                color: primaryColor,
+                              ),
+                              _ContactCircle(
+                                icon: Icons.mail_rounded,
+                                color: primaryColor,
+                              ),
+                              _ContactCircle(
+                                icon: Icons.location_on_rounded,
+                                color: primaryColor,
+                              ),
                             ],
                           ),
                           const SizedBox(height: 30),
@@ -170,37 +181,61 @@ class ProfilePage extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'My Resume',
-                                        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
                                       SizedBox(height: 14),
                                       Text(
                                         'david_resume.pdf',
-                                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                Icon(Icons.more_vert_rounded, color: Colors.white, size: 34),
+                                Icon(
+                                  Icons.more_vert_rounded,
+                                  color: Colors.white,
+                                  size: 34,
+                                ),
                               ],
                             ),
                           ),
                           const SizedBox(height: 34),
-                          Align(
+                          const Align(
                             alignment: Alignment.centerLeft,
-                            child: Text('Skill', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: titleColor)),
+                            child: Text(
+                              'Skill',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
+                                color: titleColor,
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 18),
                           GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: skills.length,
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3, mainAxisSpacing: 18, crossAxisSpacing: 18, childAspectRatio: 0.83,
-                            ),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  mainAxisSpacing: 18,
+                                  crossAxisSpacing: 18,
+                                  childAspectRatio: 0.72,
+                                ),
                             itemBuilder: (context, index) {
                               final skill = skills[index];
                               return _SkillCard(
@@ -208,7 +243,6 @@ class ProfilePage extends StatelessWidget {
                                 percent: skill['percent'] as int,
                                 progressColor: skill['color'] as Color,
                                 bgColor: lightPurple,
-                                textColor: titleColor,
                               );
                             },
                           ),
@@ -222,7 +256,48 @@ class ProfilePage extends StatelessWidget {
           ],
         ),
       ),
-      // PERHATIKAN: bottomNavigationBar dihapus dari sini karena numpang di Dashboard!
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.only(top: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 18,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: 3,
+          onTap: (_) {},
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          selectedItemColor: primaryColor,
+          unselectedItemColor: const Color(0xFFB7B7BF),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          elevation: 0,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded, size: 34),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_border_rounded, size: 32),
+              label: 'Saved',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.mail_outline_rounded, size: 32),
+              label: 'Mail',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.grid_view_rounded, size: 30),
+              label: 'Menu',
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -240,7 +315,7 @@ class _ContactCircle extends StatelessWidget {
       height: 110,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Theme.of(context).dividerColor),
+        border: Border.all(color: const Color(0xFFE4DDF1)),
         color: Colors.transparent,
       ),
       child: Icon(icon, color: color, size: 38),
@@ -248,76 +323,94 @@ class _ContactCircle extends StatelessWidget {
   }
 }
 
+// ==========================================
+// KODE YANG SUDAH DIPERBAIKI ADA DI BAWAH INI
+// ==========================================
 class _SkillCard extends StatelessWidget {
   final String title;
   final int percent;
   final Color progressColor;
   final Color bgColor;
-  final Color? textColor;
 
   const _SkillCard({
     required this.title,
     required this.percent,
     required this.progressColor,
     required this.bgColor,
-    this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(10, 16, 10, 16),
+      padding: const EdgeInsets.fromLTRB(10, 14, 10, 14),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center, // Ubah posisi ke center
         children: [
-          SizedBox(
-            width: 94,
-            height: 94,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  width: 94,
-                  height: 94,
-                  child: CircularProgressIndicator(
-                    value: percent / 100,
-                    strokeWidth: 10,
-                    backgroundColor: Colors.white,
-                    valueColor: AlwaysStoppedAnimation<Color>(progressColor),
-                  ),
-                ),
-                Container(
-                  width: 62,
-                  height: 62,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    shape: BoxShape.circle,
-                  ),
+          // Lingkaran Persentase dibungkus Expanded & FittedBox
+          Expanded(
+            flex: 3,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: SizedBox(
+                width: 82,
+                height: 82,
+                child: Stack(
                   alignment: Alignment.center,
-                  child: Text(
-                    '$percent%',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: textColor,
+                  children: [
+                    SizedBox(
+                      width: 82,
+                      height: 82,
+                      child: CircularProgressIndicator(
+                        value: percent / 100,
+                        strokeWidth: 8,
+                        backgroundColor: Colors.white,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          progressColor,
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$percent%',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF111111),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-          const SizedBox(height: 18),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: textColor,
+          const SizedBox(height: 10), // Jarak disesuaikan
+          // Teks Judul dibungkus Expanded (sudah dari awal)
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF212529),
+                ),
+              ),
             ),
           ),
         ],

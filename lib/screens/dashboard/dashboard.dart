@@ -4,6 +4,16 @@ import 'package:responsi1apb/main.dart';
 import 'package:responsi1apb/screens/profile/profil_page.dart';
 import 'package:responsi1apb/screens/job/detail_job.dart';
 import 'package:responsi1apb/screens/dashboard/kategori_page.dart';
+import 'package:responsi1apb/screens/auth/signin.dart';
+import 'package:responsi1apb/screens/onboarding/get_started.dart';
+import 'package:responsi1apb/screens/auth/loginjob.dart';
+import 'package:responsi1apb/screens/pages/components_page.dart';
+import 'package:responsi1apb/screens/models/component_model.dart';
+import 'package:responsi1apb/screens/pages/notification_page.dart';
+import 'package:responsi1apb/screens/models/notification_model.dart';
+import 'package:responsi1apb/screens/pagesrafi/pages_list_screen.dart';
+import 'package:responsi1apb/screens/profile/profil_page.dart';
+import 'package:responsi1apb/screens/profile/chat_page.dart';
 
 class JobieDashboard extends StatefulWidget {
   const JobieDashboard({Key? key}) : super(key: key);
@@ -605,11 +615,22 @@ class _JobieDashboardState extends State<JobieDashboard> {
                 "Recent Jobs",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Text(
-                "More",
-                style: TextStyle(
-                  color: primaryColor,
-                  fontWeight: FontWeight.bold,
+             GestureDetector(
+                onTap: () {
+                  // Navigasi ke KategoriPage saat teks "More" ditekan
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const KategoriPage(),
+                    ),
+                  );
+                },
+                child: Text(
+                  "More",
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -886,6 +907,14 @@ class _JobieDashboardState extends State<JobieDashboard> {
                       const Color(0xFFFF6F91),
                       const Color(0xFFFFEEF2),
                       'Welcome',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => JobieRoleScreen(),
+                          ),
+                        );
+                      },
                     ),
                     _drawerItem(
                       Icons.home_rounded,
@@ -902,20 +931,42 @@ class _JobieDashboardState extends State<JobieDashboard> {
                       const Color(0xFFFFA14A),
                       const Color(0xFFFFF4E7),
                       'Pages',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PagesListScreen(),
+                          ),
+                        );
+                      },
                     ),
                     _drawerItem(
                       Icons.grid_view_rounded,
                       const Color(0xFF47B5FF),
                       const Color(0xFFEAF7FF),
                       'Components',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ComponentsPage(),
+                          ),
+                        );
+                      },
                     ),
                     _drawerItem(
                       Icons.notifications_rounded,
                       const Color(0xFF19B38C),
                       const Color(0xFFE8FAF4),
                       'Notification',
-                      badge: '1',
-                      badgeColor: const Color(0xFFFF5C5C),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NotificationPage(),
+                          ),
+                        );
+                      },
                     ),
                     _drawerItem(
                       Icons.person_rounded,
@@ -923,8 +974,12 @@ class _JobieDashboardState extends State<JobieDashboard> {
                       const Color(0xFFFFF7DD),
                       'Profile',
                       onTap: () {
-                        Navigator.pop(context);
-                        setState(() => _currentIndex = 3);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfilePage(),
+                          ),
+                        );
                       },
                     ),
                     _drawerItem(
@@ -934,12 +989,30 @@ class _JobieDashboardState extends State<JobieDashboard> {
                       'Chat',
                       badge: '5',
                       badgeColor: const Color(0xFF56C3EA),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ChatPage()),
+                        );
+                      },
                     ),
                     _drawerItem(
                       Icons.logout_rounded,
                       const Color(0xFFFF7A9C),
                       const Color(0xFFFFEEF2),
                       'Logout',
+                      onTap: () {
+                        // Navigasi Logout: Pindah ke halaman Login dan hapus history halaman sebelumnya
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            // Ganti 'LoginScreen()' dengan nama class halaman loginmu (misal: JobieRoleScreen)
+                            builder: (context) => GetStartedScreen(),
+                          ),
+                          (Route<dynamic> route) =>
+                              false, // 'false' artinya hapus semua route/history sebelumnya
+                        );
+                      },
                     ),
                     const SizedBox(height: 20),
                     const Divider(),
