@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:responsi1apb/screens/auth/signin.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -10,6 +12,74 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _isPasswordObscured = true;
+  bool _isLoading = false;
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  String _selectedRole = 'pelamar';
+
+  Future<void> _registerUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final String apiUrl = 'http://localhost:8000/api/register'; 
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'password': _passwordController.text,
+          'password_confirmation': _confirmPasswordController.text,
+          'role': _selectedRole,
+        }),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 201) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SignInScreen()),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal: ${responseData['message']}')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,23 +173,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     const SizedBox(height: 40),
-                    _buildTextField(hintText: 'User Name', isPassword: false),
-                    const SizedBox(height: 20),
-                    _buildTextField(hintText: 'User Email', isPassword: false),
-                    const SizedBox(height: 20),
-                    _buildTextField(hintText: 'Password', isPassword: true),
+                    _buildTextField(hintText: 'Full Name', isPassword: false, controller: _nameController),
+                    const SizedBox(height: 15),
+                    _buildTextField(hintText: 'User Email', isPassword: false, controller: _emailController),
+                    const SizedBox(height: 15),
+                    _buildTextField(hintText: 'Password', isPassword: true, controller: _passwordController),
+                    const SizedBox(height: 15),
+                    _buildTextField(hintText: 'Confirm Password', isPassword: true, controller: _confirmPasswordController),
+                    const SizedBox(height: 15),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: const Color(0xFFE5E7EB)),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedRole,
+                          isExpanded: true,
+                          icon: const Icon(Icons.arrow_drop_down, color: const Color(0xFF7033FF)),
+                          items: const [
+                            DropdownMenuItem(value: 'pelamar', child: Text('Sebagai Pelamar')),
+                            DropdownMenuItem(value: 'company', child: Text('Sebagai Perusahaan')),
+                          ],
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              setState(() {
+                                _selectedRole = newValue;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
                       height: 55,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignInScreen(),
-                            ),
-                          );
+                        onPressed: _isLoading ? null : () {
+                          _registerUser();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF7033FF),
@@ -128,14 +222,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          'Sign UP',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: _isLoading 
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : const Text(
+                              'Sign UP',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -180,7 +283,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildTextField({required String hintText, required bool isPassword}) {
+  Widget _buildTextField({required String hintText, required bool isPassword, required TextEditingController controller}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -194,6 +297,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ],
       ),
       child: TextField(
+        controller: controller,
         obscureText: isPassword ? _isPasswordObscured : false,
         decoration: InputDecoration(
           hintText: hintText,

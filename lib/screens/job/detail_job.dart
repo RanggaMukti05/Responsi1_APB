@@ -2,19 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:responsi1apb/screens/job/apply_job.dart';
 
 class DetailJobPage extends StatelessWidget {
+  final String jobId;
   final String companyName;
   final String jobTitle;
   final String salary;
   final String location;
   final String logoPath;
+  final String description;
+  final String requirements;
+  final String status;
 
   const DetailJobPage({
     super.key,
+    required this.jobId,
     required this.companyName,
     required this.jobTitle,
     required this.salary,
     required this.location,
     required this.logoPath,
+    required this.description,
+    required this.requirements,
+    required this.status,
   });
 
   @override
@@ -94,16 +102,37 @@ class DetailJobPage extends StatelessWidget {
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              Text(
-                                jobTitle,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  height: 1.2,
-                                  fontWeight: FontWeight.w700,
-                                  color: titleColor,
-                                ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      jobTitle,
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        color: titleColor,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: status == 'open' ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      status == 'open' ? 'Buka' : 'Tutup',
+                                      style: TextStyle(
+                                        color: status == 'open' ? Colors.green : Colors.red,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
+                              const SizedBox(height: 18),
                             ],
                           ),
                         ),
@@ -178,20 +207,25 @@ class DetailJobPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const Text(
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                      style: TextStyle(
+                    Text(
+                      description.isEmpty ? 'Tidak ada deskripsi.' : description,
+                      style: const TextStyle(
                         fontSize: 16,
                         height: 1.6,
                         color: textColor,
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _buildCheckItem('Sed ut perspiciatis unde omnis', primaryColor),
-                    _buildCheckItem('Doloremque laudantium', primaryColor),
-                    _buildCheckItem('Ipsa quae ab illo inventore', primaryColor),
-                    _buildCheckItem('Architecto beatae vitae dicta', primaryColor),
-                    _buildCheckItem('Sunt explicabo', primaryColor),
+                    const Text(
+                      'Requirements',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: titleColor,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    ..._buildRequirementsList(requirements, primaryColor),
                     const SizedBox(height: 28),
                   ],
                 ),
@@ -226,11 +260,12 @@ class DetailJobPage extends StatelessWidget {
                     child: SizedBox(
                       height: 58,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: status == 'closed' ? null : () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => ApplyJobPage(
+                                jobId: jobId,
                                 companyName: companyName,
                                 jobTitle: jobTitle,
                                 logoPath: logoPath,
@@ -239,15 +274,15 @@ class DetailJobPage extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
+                          backgroundColor: status == 'closed' ? Colors.grey : primaryColor,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(22),
                           ),
                         ),
-                        child: const Text(
-                          'APPLY JOB',
-                          style: TextStyle(
+                        child: Text(
+                          status == 'closed' ? 'LOWONGAN DITUTUP' : 'APPLY JOB',
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -358,5 +393,17 @@ class DetailJobPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<Widget> _buildRequirementsList(String reqs, Color color) {
+    if (reqs.trim().isEmpty) return [_buildCheckItem('Tidak ada requirements.', color)];
+    List<String> list = reqs.split('\n');
+    if (list.length <= 1 && reqs.contains(',')) {
+      list = reqs.split(',');
+    }
+    return list
+        .where((e) => e.trim().isNotEmpty)
+        .map((e) => _buildCheckItem(e.trim(), color))
+        .toList();
   }
 }

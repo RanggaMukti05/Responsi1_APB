@@ -14,6 +14,9 @@ import 'package:responsi1apb/screens/models/notification_model.dart';
 import 'package:responsi1apb/screens/pagesrafi/pages_list_screen.dart';
 import 'package:responsi1apb/screens/profile/profil_page.dart';
 import 'package:responsi1apb/screens/profile/chat_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class JobieDashboard extends StatefulWidget {
   const JobieDashboard({Key? key}) : super(key: key);
@@ -28,6 +31,62 @@ class _JobieDashboardState extends State<JobieDashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController searchController = TextEditingController();
   final PageController _pageController = PageController(viewportFraction: 0.88);
+
+  String userName = "Loading...";
+  List<Map<String, dynamic>> apiJobs = [];
+  bool isLoadingJobs = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('user_name') ?? 'Guest User';
+    });
+    _fetchJobs(prefs.getString('auth_token') ?? '');
+  }
+
+  Future<void> _fetchJobs(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/api/jobs'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List jobsData = data['data'];
+        setState(() {
+          apiJobs = jobsData.map((job) => {
+            'id': job['id']?.toString() ?? '',
+            'title': job['title']?.toString() ?? '',
+            'loc': job['company'] != null ? job['company']['alamat']?.toString() ?? 'Unknown' : 'Unknown',
+            'location': job['company'] != null ? job['company']['alamat']?.toString() ?? 'Unknown' : 'Unknown',
+            'sal': 'Negotiable',
+            'salary': 'Negotiable',
+            'company': job['company'] != null ? job['company']['nama_perusahaan']?.toString() ?? 'Unknown' : 'Unknown',
+            'logo': 'assets/images/logo/logo_hijau.png',
+            'description': job['description']?.toString() ?? '',
+            'requirements': job['requirements']?.toString() ?? '',
+            'status': job['status']?.toString() ?? 'open',
+          }).toList();
+          isLoadingJobs = false;
+        });
+      } else {
+        print("API Error: ${response.statusCode} - ${response.body}");
+        setState(() => isLoadingJobs = false);
+      }
+    } catch (e) {
+      print("Fetch Error: $e");
+      setState(() => isLoadingJobs = false);
+    }
+  }
 
   // DATA LIST PEKERJAAN (Sekarang ada 3 data)
   final List<Map<String, String>> allJobs = [
@@ -70,13 +129,13 @@ class _JobieDashboardState extends State<JobieDashboard> {
   ];
 
   // FUNGSI UNTUK SEARCH PEKERJAAN
-  List<Map<String, String>> get filteredJobs {
+  List<Map<String, dynamic>> get filteredJobs {
     final searchText = searchController.text.toLowerCase().trim();
-    return allJobs.where((job) {
+    return apiJobs.where((job) {
       return searchText.isEmpty ||
-          job['title']!.toLowerCase().contains(searchText) ||
-          job['company']!.toLowerCase().contains(searchText) ||
-          job['location']!.toLowerCase().contains(searchText);
+          job['title'].toString().toLowerCase().contains(searchText) ||
+          job['company'].toString().toLowerCase().contains(searchText) ||
+          job['loc'].toString().toLowerCase().contains(searchText);
     }).toList();
   }
 
@@ -265,15 +324,15 @@ class _JobieDashboardState extends State<JobieDashboard> {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         "Good Morning",
                         style: TextStyle(color: Colors.white70, fontSize: 15),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
-                        "Henry Kanwil",
-                        style: TextStyle(
+                        userName,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -465,26 +524,7 @@ class _JobieDashboardState extends State<JobieDashboard> {
         Theme.of(context).textTheme.bodyMedium?.color ??
         const Color(0xFF8E8E93);
 
-    final List<Map<String, String>> recommendedJobs = [
-      {
-        'title': 'Software Engineer',
-        'loc': 'Jakarta, Indonesia',
-        'sal': '\$500 - \$1,000',
-        'logo': 'assets/images/logo/logo_hijau.png',
-      },
-      {
-        'title': 'Data Analyst',
-        'loc': 'Bandung, Indonesia',
-        'sal': '\$400 - \$800',
-        'logo': 'assets/images/logo/logo_hijau.png',
-      },
-      {
-        'title': 'Product Manager',
-        'loc': 'Surabaya, Indonesia',
-        'sal': '\$600 - \$1,200',
-        'logo': 'assets/images/logo/logo_hijau.png',
-      },
-    ];
+    final List<Map<String, dynamic>> recommendedJobs = apiJobs.isNotEmpty ? apiJobs : [];
 
     return Column(
       children: [
@@ -497,7 +537,7 @@ class _JobieDashboardState extends State<JobieDashboard> {
                 "Recomended Jobs",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Row(
+              if (recommendedJobs.isNotEmpty) Row(
                 children: List.generate(
                   recommendedJobs.length,
                   (index) => AnimatedContainer(
@@ -520,74 +560,119 @@ class _JobieDashboardState extends State<JobieDashboard> {
         const SizedBox(height: 16),
         SizedBox(
           height: 110,
-          child: PageView.builder(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _currentRecommendedIndex = index;
-              });
-            },
-            itemCount: recommendedJobs.length,
-            itemBuilder: (context, index) {
-              final job = recommendedJobs[index];
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Theme.of(context).dividerColor),
-                ),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        job['logo']!,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            job['title']!,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            job['loc']!,
-                            style: TextStyle(color: textColor, fontSize: 13),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.monetization_on_outlined,
-                                color: primaryColor,
-                                size: 16,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                job['sal']!,
-                                style: TextStyle(
-                                  color: textColor,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 13,
+          child: isLoadingJobs 
+              ? const Center(child: CircularProgressIndicator()) 
+              : recommendedJobs.isEmpty
+                  ? const Center(child: Text("Tidak ada lowongan tersedia", style: TextStyle(color: Colors.grey)))
+                  : PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentRecommendedIndex = index;
+                        });
+                      },
+                      itemCount: recommendedJobs.length,
+                      itemBuilder: (context, index) {
+                        final job = recommendedJobs[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetailJobPage(
+                                  jobId: job['id'].toString(),
+                                  companyName: job['company'].toString(),
+                                  jobTitle: job['title'].toString(),
+                                  salary: job['sal'].toString(),
+                                  location: job['loc'].toString(),
+                                  logoPath: job['logo'].toString(),
+                                  description: job['description']?.toString() ?? '',
+                                  requirements: job['requirements']?.toString() ?? '',
+                                  status: job['status']?.toString() ?? 'open',
                                 ),
                               ),
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Theme.of(context).dividerColor),
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.asset(
+                                  job['logo'].toString(),
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            job['title'].toString(),
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: (job['status']?.toString() ?? 'open') == 'open' ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            (job['status']?.toString() ?? 'open') == 'open' ? 'Buka' : 'Tutup',
+                                            style: TextStyle(
+                                              color: (job['status']?.toString() ?? 'open') == 'open' ? Colors.green : Colors.red,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      job['loc'].toString(),
+                                      style: TextStyle(color: textColor, fontSize: 13),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.monetization_on_outlined,
+                                          color: primaryColor,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          job['sal'].toString(),
+                                          style: TextStyle(
+                                            color: textColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 13,
+                                          ),
+                                        ),
                             ],
                           ),
                         ],
@@ -595,8 +680,9 @@ class _JobieDashboardState extends State<JobieDashboard> {
                     ),
                   ],
                 ),
-              );
-            },
+              ),
+            );
+          },
           ),
         ),
       ],
@@ -657,12 +743,16 @@ class _JobieDashboardState extends State<JobieDashboard> {
                   itemBuilder: (context, index) {
                     final job = filteredJobs[index];
                     return _recentJobCard(
+                      job['id']?.toString() ?? '',
                       primaryColor,
-                      job['company']!,
-                      job['title']!,
-                      job['salary']!,
-                      job['location']!,
-                      job['logo']!,
+                      job['company']?.toString() ?? '',
+                      job['title']?.toString() ?? '',
+                      job['salary']?.toString() ?? '',
+                      job['location']?.toString() ?? '',
+                      job['logo']?.toString() ?? '',
+                      job['description']?.toString() ?? '',
+                      job['requirements']?.toString() ?? '',
+                      job['status']?.toString() ?? 'open',
                     );
                   },
                 ),
@@ -672,12 +762,16 @@ class _JobieDashboardState extends State<JobieDashboard> {
   }
 
   Widget _recentJobCard(
+    String jobId,
     Color primaryColor,
     String company,
     String title,
     String salary,
     String loc,
     String logo,
+    String description,
+    String requirements,
+    String status,
   ) {
     final textColor =
         Theme.of(context).textTheme.bodyMedium?.color ??
@@ -689,11 +783,15 @@ class _JobieDashboardState extends State<JobieDashboard> {
           context,
           MaterialPageRoute(
             builder: (_) => DetailJobPage(
+              jobId: jobId,
               companyName: company,
               jobTitle: title,
               salary: salary,
               location: loc,
               logoPath: logo,
+              description: description,
+              requirements: requirements,
+              status: status,
             ),
           ),
         );
@@ -722,9 +820,29 @@ class _JobieDashboardState extends State<JobieDashboard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    company,
-                    style: TextStyle(color: textColor, fontSize: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        company,
+                        style: TextStyle(color: textColor, fontSize: 12),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: status == 'open' ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          status == 'open' ? 'Buka' : 'Tutup',
+                          style: TextStyle(
+                            color: status == 'open' ? Colors.green : Colors.red,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -864,15 +982,15 @@ class _JobieDashboardState extends State<JobieDashboard> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
+                      children: [
+                        const Text(
                           'Good Morning',
                           style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          'Henry Kanwil',
-                          style: TextStyle(
+                          userName,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,

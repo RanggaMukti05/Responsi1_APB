@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApplyJobPage extends StatefulWidget {
+  final String jobId;
   final String companyName;
   final String jobTitle;
   final String logoPath;
 
   const ApplyJobPage({
     super.key,
+    required this.jobId,
     required this.companyName,
     required this.jobTitle,
     required this.logoPath,
@@ -21,6 +26,9 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+
+  PlatformFile? cvFile;
+  bool isSubmitting = false;
 
   final Color primaryColor = const Color(0xFF6F42C1);
   final Color darkHeaderColor = const Color(0xFF2E006B);
@@ -37,12 +45,67 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
     super.dispose();
   }
 
-  void _submitApply() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Lamaran berhasil dikirim'),
-      ),
-    );
+  Future<void> _submitApply() async {
+    if (nameController.text.isEmpty || emailController.text.isEmpty || phoneController.text.isEmpty || cvFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Harap isi semua data dan upload CV')));
+      return;
+    }
+
+    setState(() => isSubmitting = true);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('auth_token') ?? '';
+
+    try {
+      // 1. Buat application dulu
+      final appRes = await http.post(
+        Uri.parse('http://127.0.0.1:8000/api/applications'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'company_job_id': widget.jobId}),
+      );
+
+      final appData = jsonDecode(appRes.body);
+      if (appRes.statusCode != 201 && appRes.statusCode != 200) {
+        setState(() => isSubmitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(appData['message'] ?? 'Gagal membuat lamaran')));
+        return;
+      }
+
+      String appId = appData['data']['id'].toString();
+
+      // 2. Buat detail application dengan multipart request
+      var request = http.MultipartRequest('POST', Uri.parse('http://127.0.0.1:8000/api/detail-applications'));
+      request.headers['Authorization'] = 'Bearer $token';
+      request.headers['Accept'] = 'application/json';
+      
+      request.fields['application_id'] = appId;
+      request.fields['username'] = nameController.text;
+      request.fields['user_email'] = emailController.text;
+      request.fields['phone_number'] = phoneController.text;
+
+      if (cvFile!.bytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('cv', cvFile!.bytes!, filename: cvFile!.name));
+      } else if (cvFile!.path != null) {
+        request.files.add(await http.MultipartFile.fromPath('cv', cvFile!.path!));
+      }
+
+      var response = await request.send();
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        setState(() => isSubmitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Lamaran berhasil dikirim!')));
+        Navigator.pop(context); // Kembali ke halaman sebelumnya
+      } else {
+        setState(() => isSubmitting = false);
+        var resBody = await response.stream.bytesToString();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal mengirim detail lamaran: $resBody')));
+      }
+    } catch (e) {
+      setState(() => isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
+    }
   }
 
   @override
@@ -205,25 +268,44 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
   }
 
   Widget _buildUploadResumeBox() {
-    return Container(
-      width: double.infinity,
-      height: 86,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(44),
-        border: Border.all(
-          color: const Color(0xFFCFCFCF),
-          width: 1.6,
-          strokeAlign: BorderSide.strokeAlignInside,
+    return GestureDetector(
+      onTap: () async {
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['pdf'],
+        );
+        if (result != null) {
+          setState(() {
+            cvFile = result.files.first;
+          });
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        height: 86,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(44),
+          border: Border.all(
+            color: const Color(0xFFCFCFCF),
+            width: 1.6,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
         ),
-      ),
-      child: Center(
-        child: Text(
-          '+ Upload Resume',
-          style: TextStyle(
-            color: hintColor,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              cvFile != null ? cvFile!.name : '+ Upload Resume',
+              style: TextStyle(
+                color: cvFile != null ? titleColor : hintColor,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ),
@@ -278,7 +360,7 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
       child: SizedBox(
         height: 64,
         child: ElevatedButton(
-          onPressed: _submitApply,
+          onPressed: isSubmitting ? null : _submitApply,
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
             elevation: 0,
@@ -286,14 +368,16 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
               borderRadius: BorderRadius.circular(34),
             ),
           ),
-          child: const Text(
-            'Apply job',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: isSubmitting 
+              ? const CircularProgressIndicator(color: Colors.white)
+              : const Text(
+                  'Apply job',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
         ),
       ),
     );

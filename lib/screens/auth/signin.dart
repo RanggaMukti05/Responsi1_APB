@@ -3,6 +3,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:responsi1apb/screens/auth/forgetpw.dart';
 import 'package:responsi1apb/screens/auth/createakun.dart';
 import 'package:responsi1apb/screens/dashboard/dashboard.dart';
+import 'package:responsi1apb/screens/company/company_dashboard.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -13,6 +17,79 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   bool _isPasswordObscured = true;
+  bool _isLoading = false;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+final String apiUrl = 'http://localhost:8000/api/login'; 
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'email': _emailController.text, 
+          'password': _passwordController.text,
+        }),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        String token = responseData['token'];
+        var user = responseData['user'];
+        
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        await prefs.setString('user_role', user['role']);
+        await prefs.setString('user_name', user['name']);
+        
+        if (!mounted) return;
+        
+        if (user['role'] == 'company') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const CompanyDashboard()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const JobieDashboard()),
+          );
+        }
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login Gagal: ${responseData['message']}')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Error: Tidak dapat terhubung ke server')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +167,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           ],
                         ),
                         child: TextField(
+                          controller: _emailController,
                           decoration: InputDecoration(
-                            hintText: 'User Name',
+                            hintText: 'Email Anda',
                             hintStyle: const TextStyle(
                               color: Color(0xFFA0A5B9),
                             ),
@@ -134,6 +212,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ],
                         ),
                         child: TextField(
+                          controller: _passwordController,
                           obscureText: _isPasswordObscured,
                           decoration: InputDecoration(
                             hintText: 'Password',
@@ -207,13 +286,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         width: double.infinity,
                         height: 55,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const JobieDashboard(),
-                              ),
-                            );
+                          onPressed: _isLoading ? null : () {
+                            _loginUser();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF7033FF),
@@ -222,14 +296,23 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                             elevation: 0,
                           ),
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: _isLoading 
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                            : const Text(
+                                'Login',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                         ),
                       ),
                       const SizedBox(height: 40),
